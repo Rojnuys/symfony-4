@@ -20,7 +20,10 @@ class UrlCode
         #[ORM\Column(length: 255)]
         private string $url,
         #[ORM\Column(length: 10)]
-        private string $code
+        private string $code,
+        #[ORM\ManyToOne(targetEntity: User::class, fetch: 'LAZY', inversedBy: 'user')]
+        #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+        private User $user
     )
     {
     }
@@ -64,5 +67,15 @@ class UrlCode
         $this->count++;
 
         return $this;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): void
+    {
+        $this->user = $user;
     }
 }

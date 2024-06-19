@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User statistic{% endblock %}
+
+{% block stylesheets %}
+    {{ knp_pagination_rel_links(pagination) }}
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function copyToBuffer(data) {
+            navigator.clipboard.writeText(data);
+        }
+    </script>
+{% endblock %}
+
+{% block breadcrumb_prev %}
+    <li class="breadcrumb-item"><a href="{{ path('app_home_index') }}">Home</a></li>
+{% endblock %}
+
+{% block breadcrumb_current %}
+    <li class="breadcrumb-item active" aria-current="page">User Statistic</li>
+{% endblock %}
+
+{% block main %}
+    <div class="row mx-3">
+        <div class="card mb-5 p-3">
+            <form action="{{ path('app_shortener_encode') }}" method="post">
+                <label for="url">Url</label>
+                <input type="text" class="form-control" name="url" id="url" required>
+                <input class="btn btn-primary mt-3" type="submit" value="Encode">
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        {% for url_code in pagination %}
+            <div class="col-12">
+                {{ include('url_code/url_code_info.html.twig') }}
+            </div>
+        {% endfor %}
+    </div>
+    <div class="row mx-3 mt-5">
+        <div class="navigation">
+            {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+        </div>
+    </div>
+{% endblock %}

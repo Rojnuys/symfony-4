@@ -1,0 +1,13 @@
+<div class="card m-3">
+    <div class="card-header">
+        {{ print_favicon(url_code.url)|raw }}
+        <a href="{{ path('app_shortener_url_code_statistic', {'code': url_code.code}) }}">{{ url_code.code }}</a>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">
+            <a href="{{ path('app_shortener_redirect', {'code': url_code.code}) }}">{{ url_code.url }}</a>
+        </h5>
+        <p class="card-text">Count: {{ url_code.count }}</p>
+        <button class="btn btn-outline-primary" onclick="copyToBuffer('{{ app.request.schemeAndHttpHost ~ path('app_shortener_redirect', {'code': url_code.code}) }}')">Copy</button>
+    </div>
+</div>

@@ -1,0 +1,23 @@
+{% extends 'url_code/url_codes.html.twig' %}
+
+{% block title %}UrlCode {{ url_code.code }} statistic{% endblock %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block breadcrumb_prev %}
+        {{ parent() }}
+        <li class="breadcrumb-item"><a href="{{ path('app_shortener_user_statistic') }}">User Statistic</a></li>
+{% endblock %}
+
+{% block breadcrumb_current %}
+        <li class="breadcrumb-item active" aria-current="page">{{ url_code.code }}</li>
+{% endblock %}
+
+{% block main %}
+<div class="row">
+        <div class="col-12">
+            {{ include('url_code/url_code_info.html.twig') }}
+        </div>
+</div>
+{% endblock %}

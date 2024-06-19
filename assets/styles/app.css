@@ -1,3 +1,13 @@
-body {
-    background-color: skyblue;
+.main-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex-grow: 1;
+}
+
+.urlFavicon {
+    width: 30px;
 }

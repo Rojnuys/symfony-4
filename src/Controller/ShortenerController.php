@@ -2,41 +2,49 @@
 
 namespace App\Controller;
 
-use App\Url\Interfaces\IUrlDecoder;
+use App\Entity\UrlCode;
+use App\Services\Shortener\UrlCodeService;
 use App\Url\Interfaces\IUrlEncoder;
-use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/shortener', name: 'app_shortener_')]
 class ShortenerController extends AbstractController
 {
-    #[Route('/encode/{url}', name: 'encode', requirements: ['url' => '.+'], methods: ['GET'])]
-    public function encode(string $url, IUrlEncoder $encoder): Response
+    #[Route('/encode', name: 'encode', methods: ['POST'])]
+    public function encode(Request $request, IUrlEncoder $encoder): Response
     {
-        try {
-            $content = 'Code: ' . $encoder->encode($url);
-            $statusCode = 200;
-        } catch (InvalidArgumentException $e) {
-            $content = $e->getMessage();
-            $statusCode = 404;
-        }
+        $url = $request->get('url');
+        $code = $encoder->encode($url);
 
-        return new Response($content, $statusCode);
+        return $this->redirectToRoute('app_shortener_url_code_statistic', ['code' => $code]);
     }
 
-    #[Route('/decode/{code}', name: 'decode', requirements: ['code' => '\w{1,10}'], methods: ['GET'])]
-    public function decode(string $code, IUrlDecoder $decoder): Response
+    #[Route('/{code}/statistic', name: 'url_code_statistic', requirements: ['code' => '\w{1,10}'], methods: ['GET'])]
+    public function urlCodeStatistic(UrlCode $urlCode): Response
     {
-        try {
-            $content = 'Url: ' . $decoder->decode($code);
-            $statusCode = 200;
-        } catch (InvalidArgumentException $e) {
-            $content = $e->getMessage();
-            $statusCode = 404;
-        }
+        return $this->render('url_code/url_code.html.twig', [
+            'url_code' => $urlCode
+        ]);
+    }
 
-        return new Response($content, $statusCode);
+    #[Route('/statistic', name: 'user_statistic', methods: ['GET'])]
+    public function userStatistic(Request $request, UrlCodeService $service)
+    {
+        $page = $request->query->getInt('page', 1);
+        $pageSize = $request->query->getInt('pageSize', 3);
+
+        return $this->render('url_code/url_codes.html.twig', [
+            'pagination' => $service->getAllByUserWithPaginate($page, $pageSize)
+        ]);
+    }
+
+    #[Route('/r/{code}', name: 'redirect', requirements: ['code' => '\w{1,10}'], methods: ['GET'])]
+    public function redirectUrl(UrlCode $urlCode, UrlCodeService $service)
+    {
+        $service->incrementStatistic($urlCode);
+        return $this->redirect($urlCode->getUrl());
     }
 }

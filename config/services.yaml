@@ -24,4 +24,4 @@ services:
     # please note that last definitions always *replace* previous ones
 
     App\Url\UrlShortener\Interfaces\IUrlCodeRepository:
-        class: App\Services\ShortenerRepository
+        class: App\Services\Shortener\ShortenerRepository
